@@ -18,27 +18,31 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(0) == inverted) {
+  if (activated && ((millis() - activationTime) > duration)) {
+    digitalWrite(12, LOW);
+    activated = false;
+  }
+
+  if (digitalRead(0) == inverted) { //Pedal pressed
     if (pressed) return;
     pressed = true;
     pressedTime = millis();
     digitalWrite(13, HIGH);
+    Serial.print("PRESSED: ");
+    Serial.println(inverted);
   }
-  else {
-    if (pressed) {
-      if ((millis()  - pressedTime) > minInvertDelay) inverted = !inverted;
-      else if ((millis()  - pressedTime) > minReleaseDelay) {
-        digitalWrite(12, HIGH);
-        activated = true;
-        activationTime = millis();
-      }
+  else if (pressed) { //Pedal released
+    if ((millis()  - pressedTime) > minInvertDelay) {
+      inverted = !inverted;
+      Serial.println("INVERTED");
     }
+    else if ((millis()  - pressedTime) > minReleaseDelay) {
+      digitalWrite(12, HIGH);
+      activated = true;
+      activationTime = millis();
+    }
+    Serial.println("RELEASED");
     pressed = false;
     digitalWrite(13, LOW);
-  }
-
-  if (activated && ((millis() - activationTime) > duration)) {
-    digitalWrite(12, LOW);
-    activated = false;
   }
 }
