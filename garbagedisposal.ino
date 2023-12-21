@@ -7,18 +7,19 @@ unsigned long activationTime = 0;
 
 //CONSTANTS
 const unsigned long duration = 7000;
-const unsigned long minReleaseDelay = 100;
+const unsigned long minReleaseDelay = 50;
 const unsigned long minInvertDelay = 10000;
 
 void setup() {
   pinMode(0, INPUT_PULLUP); //Push button (HIGH = off, LOW = on)
   pinMode(12, OUTPUT); //Relay and its status LED
   pinMode(13, OUTPUT); //Green LED (HIGH = off, LOW = on)
-
+  Serial.begin(9600);
 }
 
 void loop() {
   if (digitalRead(0) == inverted) {
+    if (pressed) return;
     pressed = true;
     pressedTime = millis();
     digitalWrite(13, HIGH);
